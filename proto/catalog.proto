@@ -1,0 +1,28 @@
+syntax= "proto3";
+package catalog;
+
+//catalog service definition
+service Catalog{
+    //method to get all active products
+    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse){}
+}
+
+//////////////////////////////Request/////////////////////////////////
+
+//empty request for GetProducts method
+message GetProductsRequest{
+}
+
+///////////////////////////////Response//////////////////////////////
+
+//response for GetProducts method
+//return list of active products
+message GetProductsResponse{
+    repeated Product Products=1;
+    message Product{
+        string title=1;
+        string image=2;
+    }
+}
+
+
