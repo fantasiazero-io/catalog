@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CatalogClient interface {
 	//method to get all active products
 	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
+	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 }
 
 type catalogClient struct {
@@ -39,12 +40,22 @@ func (c *catalogClient) GetProducts(ctx context.Context, in *GetProductsRequest,
 	return out, nil
 }
 
+func (c *catalogClient) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error) {
+	out := new(CreateProductResponse)
+	err := c.cc.Invoke(ctx, "/proto.Catalog/CreateProduct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CatalogServer is the server API for Catalog service.
 // All implementations must embed UnimplementedCatalogServer
 // for forward compatibility
 type CatalogServer interface {
 	//method to get all active products
 	GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error)
+	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	mustEmbedUnimplementedCatalogServer()
 }
 
@@ -54,6 +65,9 @@ type UnimplementedCatalogServer struct {
 
 func (UnimplementedCatalogServer) GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
+}
+func (UnimplementedCatalogServer) CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
 }
 func (UnimplementedCatalogServer) mustEmbedUnimplementedCatalogServer() {}
 
@@ -86,6 +100,24 @@ func _Catalog_GetProducts_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Catalog_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CatalogServer).CreateProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Catalog/CreateProduct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CatalogServer).CreateProduct(ctx, req.(*CreateProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Catalog_ServiceDesc is the grpc.ServiceDesc for Catalog service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -96,6 +128,10 @@ var Catalog_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProducts",
 			Handler:    _Catalog_GetProducts_Handler,
+		},
+		{
+			MethodName: "CreateProduct",
+			Handler:    _Catalog_CreateProduct_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
