@@ -14,7 +14,7 @@ type CatalogServer struct {
 
 func (s *CatalogServer) GetProducts(ctx context.Context, in *proto.GetProductsRequest) (*proto.GetProductsResponse, error) {
 	products := store.GetProducts()
-	var result []*proto.GetProductsResponse_Product
+	var result = make([]*proto.GetProductsResponse_Product, len(products))
 	for i := 0; i < len(products); i++ {
 		result[i] = &proto.GetProductsResponse_Product{
 			Title: products[i].Title,
