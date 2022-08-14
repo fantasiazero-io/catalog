@@ -1,5 +1,5 @@
 # Welcome to Catalog!
-c
+
 Hi! I'm the service which manage all products.
 
 ## Features
