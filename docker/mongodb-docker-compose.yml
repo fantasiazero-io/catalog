@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+  mongo:
+    image: mongo:4.2.7
+    container_name: mongo
+    hostname: mongo
+    networks:
+      - internal-network
+    ports:
+      - 27017:27017
+
+  mongoclient:
+    image: mongo-express
+    container_name: mongoexpress
+    hostname: mongoexpress
+    depends_on:
+      - mongo
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    networks:
+      - internal-network
+    ports:
+      - 8081:8081
+  
+volumes:
+  mongo:
+
+networks:
+  internal-network: 
+    driver: bridge

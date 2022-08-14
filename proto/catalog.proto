@@ -1,0 +1,44 @@
+syntax= "proto3";
+package proto;
+
+option go_package = "proto/catalog.proto;proto";
+
+
+//catalog service definition
+service Catalog{
+    //method to get all active products
+    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse){}
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse){}
+}
+
+//////////////////////////////Request/////////////////////////////////
+
+//empty request for GetProducts method
+message GetProductsRequest{
+}
+
+//CreateProduct method request
+message CreateProductRequest{
+    string title=1;
+    string image=2;
+    int32 order=3;
+}
+
+///////////////////////////////Response//////////////////////////////
+
+//response for GetProducts method
+//return list of active products
+message GetProductsResponse{
+    repeated Product Products=1;
+    message Product{
+        string id=1;
+        string title=2;
+        string image=3;
+    }
+}
+
+//response for CreateProduct method
+message CreateProductResponse{
+}
+
+
