@@ -1,4 +1,4 @@
-module catalog
+module github.com/fantasiazero-io/catalog
 
 go 1.17
 
