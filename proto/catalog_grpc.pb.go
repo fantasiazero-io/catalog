@@ -18,9 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CatalogClient interface {
-	//method to get all active products
-	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
-	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
+	//method to get all active characters
+	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
+	CreateCharacter(ctx context.Context, in *CreateCharacterRequest, opts ...grpc.CallOption) (*MutationResponse, error)
 }
 
 type catalogClient struct {
@@ -31,18 +31,18 @@ func NewCatalogClient(cc grpc.ClientConnInterface) CatalogClient {
 	return &catalogClient{cc}
 }
 
-func (c *catalogClient) GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error) {
-	out := new(GetProductsResponse)
-	err := c.cc.Invoke(ctx, "/proto.Catalog/GetProducts", in, out, opts...)
+func (c *catalogClient) GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error) {
+	out := new(GetCharactersResponse)
+	err := c.cc.Invoke(ctx, "/proto.Catalog/GetCharacters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *catalogClient) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error) {
-	out := new(CreateProductResponse)
-	err := c.cc.Invoke(ctx, "/proto.Catalog/CreateProduct", in, out, opts...)
+func (c *catalogClient) CreateCharacter(ctx context.Context, in *CreateCharacterRequest, opts ...grpc.CallOption) (*MutationResponse, error) {
+	out := new(MutationResponse)
+	err := c.cc.Invoke(ctx, "/proto.Catalog/CreateCharacter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,9 +53,9 @@ func (c *catalogClient) CreateProduct(ctx context.Context, in *CreateProductRequ
 // All implementations must embed UnimplementedCatalogServer
 // for forward compatibility
 type CatalogServer interface {
-	//method to get all active products
-	GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error)
-	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
+	//method to get all active characters
+	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
+	CreateCharacter(context.Context, *CreateCharacterRequest) (*MutationResponse, error)
 	mustEmbedUnimplementedCatalogServer()
 }
 
@@ -63,11 +63,11 @@ type CatalogServer interface {
 type UnimplementedCatalogServer struct {
 }
 
-func (UnimplementedCatalogServer) GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
+func (UnimplementedCatalogServer) GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCharacters not implemented")
 }
-func (UnimplementedCatalogServer) CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
+func (UnimplementedCatalogServer) CreateCharacter(context.Context, *CreateCharacterRequest) (*MutationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCharacter not implemented")
 }
 func (UnimplementedCatalogServer) mustEmbedUnimplementedCatalogServer() {}
 
@@ -82,38 +82,38 @@ func RegisterCatalogServer(s grpc.ServiceRegistrar, srv CatalogServer) {
 	s.RegisterService(&Catalog_ServiceDesc, srv)
 }
 
-func _Catalog_GetProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProductsRequest)
+func _Catalog_GetCharacters_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCharactersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CatalogServer).GetProducts(ctx, in)
+		return srv.(CatalogServer).GetCharacters(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Catalog/GetProducts",
+		FullMethod: "/proto.Catalog/GetCharacters",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CatalogServer).GetProducts(ctx, req.(*GetProductsRequest))
+		return srv.(CatalogServer).GetCharacters(ctx, req.(*GetCharactersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Catalog_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateProductRequest)
+func _Catalog_CreateCharacter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCharacterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CatalogServer).CreateProduct(ctx, in)
+		return srv.(CatalogServer).CreateCharacter(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Catalog/CreateProduct",
+		FullMethod: "/proto.Catalog/CreateCharacter",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CatalogServer).CreateProduct(ctx, req.(*CreateProductRequest))
+		return srv.(CatalogServer).CreateCharacter(ctx, req.(*CreateCharacterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -126,12 +126,12 @@ var Catalog_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CatalogServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetProducts",
-			Handler:    _Catalog_GetProducts_Handler,
+			MethodName: "GetCharacters",
+			Handler:    _Catalog_GetCharacters_Handler,
 		},
 		{
-			MethodName: "CreateProduct",
-			Handler:    _Catalog_CreateProduct_Handler,
+			MethodName: "CreateCharacter",
+			Handler:    _Catalog_CreateCharacter_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

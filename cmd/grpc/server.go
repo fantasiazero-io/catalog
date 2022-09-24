@@ -14,7 +14,7 @@ func main() {
 
 	fmt.Println("Hey, I'm running")
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 9000))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 9001))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

@@ -1,34 +1,51 @@
 package service
 
 import (
+	handlers "catalog/internals/core/handlers"
+	"catalog/internals/domain/commands"
 	"catalog/proto"
-	"catalog/store"
 	"context"
-
-	"github.com/google/uuid"
 )
 
 type CatalogServer struct {
 	proto.UnimplementedCatalogServer
 }
 
-func (s *CatalogServer) GetProducts(ctx context.Context, in *proto.GetProductsRequest) (*proto.GetProductsResponse, error) {
-	products := store.GetProducts()
-	var result = make([]*proto.GetProductsResponse_Product, len(products))
-	for i := 0; i < len(products); i++ {
-		result[i] = &proto.GetProductsResponse_Product{
-			Title: products[i].Title,
-			Image: products[i].Image,
-			Id:    products[i].Id,
+// func (s *CatalogServer) GetCharacters(ctx context.Context, in *proto.GetCharactersRequest) (*proto.GetCharactersResponse, error) {
+// 	characters := handlers.GetCharacters()
+
+// 	var result = make([]*proto.GetCharactersResponse, len(characters))
+// 	for i := 0; i < len(characters); i++ {
+// 		result[i] = &proto.GetCharactersResponse_Character{
+// 			Id: characters[i].Id,
+// 		}
+// 	}
+// 	return &proto.GetCharactersResponse{
+// 		Characters: result,
+// 	}, nil
+// }
+
+func (s *CatalogServer) CreateProduct(ctx context.Context, in *proto.CreateCharacterRequest) (*proto.MutationResponse, error) {
+	var localizations = make([]commands.CharacterLocalization, len(in.Localizations))
+	for index, element := range in.Localizations {
+		localizations[index] = commands.CharacterLocalization{
+			Name: element.Name,
+			Description: commands.Description{
+				Short: element.Description.Short,
+				Full:  element.Description.Full,
+			},
+			Language: element.Language,
 		}
 	}
-	return &proto.GetProductsResponse{
-		Products: result,
-	}, nil
-}
-
-func (s *CatalogServer) CreateProduct(ctx context.Context, in *proto.CreateProductRequest) (*proto.CreateProductResponse, error) {
-	var id = uuid.NewString()
-	store.CreateProduct(id, in.Title, in.Image, int(in.Order))
-	return &proto.CreateProductResponse{}, nil
+	handlers.CreateCharacter(commands.CreateCharacter{
+		MangaId:       in.MangaId,
+		Localizations: localizations,
+		ClassId:       int(in.ClassId),
+		PersonalityId: in.PersonalityId,
+		LeadershipId:  in.LeadershipId,
+		RarityId:      int(in.RarityId),
+		TeamImage:     in.TeamImage,
+		CardImage:     in.CardImage,
+	})
+	return &proto.MutationResponse{}, nil
 }
