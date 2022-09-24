@@ -6,39 +6,68 @@ option go_package = "proto/catalog.proto;proto";
 
 //catalog service definition
 service Catalog{
-    //method to get all active products
-    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse){}
-    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse){}
+    //method to get all active characters
+    rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse){}
+    rpc CreateCharacter(CreateCharacterRequest) returns (MutationResponse){}
 }
 
 //////////////////////////////Request/////////////////////////////////
 
-//empty request for GetProducts method
-message GetProductsRequest{
+//empty request for GetCharacters method
+message GetCharactersRequest{
+    string language=1;
 }
 
-//CreateProduct method request
-message CreateProductRequest{
-    string title=1;
-    string image=2;
-    int32 order=3;
+//CreateCharacter method request
+message CreateCharacterRequest{  
+    repeated CharacterLocalization localizations=1;
+    string mangaId=2;
+    int32 classId=3;
+    string personalityId=4;
+    string leadershipId=5;
+    int32 rarityId=6;
+    string teamImage=7;
+    string cardImage=8;
+   
+    message CharacterLocalization{
+        string name=1;
+        Description description=2;
+        string language=3;
+    }
 }
 
 ///////////////////////////////Response//////////////////////////////
 
-//response for GetProducts method
-//return list of active products
-message GetProductsResponse{
-    repeated Product Products=1;
-    message Product{
+//response for GetCharacters method
+//return list of active characters
+message GetCharactersResponse{
+    repeated Character Characters=1;
+    message Character{
         string id=1;
-        string title=2;
-        string image=3;
+        string manga=2;
+        string name=3;
+        Description description=4;
+        string class=5;
+        string personality=6;
+        string leadership=7;
+        string rarity=8;
+        string teamImage=9;
+        string cardImage=10;
     }
+
 }
 
-//response for CreateProduct method
-message CreateProductResponse{
+
+//Generic models
+message Description{
+    string short=1;
+    string full=2;
+}
+
+message MutationResponse{
+    bool hasError=1;
+    string message=2;
+    string code=3;
 }
 
 
