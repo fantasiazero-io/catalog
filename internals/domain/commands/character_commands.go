@@ -2,22 +2,9 @@ package commands
 
 type CreateCharacter struct {
 	MangaId       string
-	Localizations []CharacterLocalization
+	Name          string
 	ClassId       int
-	PersonalityId string
-	LeadershipId  string
+	PersonalityId int
+	LeadershipId  int
 	RarityId      int
-	TeamImage     string
-	CardImage     string
-}
-
-type CharacterLocalization struct {
-	Name        string
-	Description Description
-	Language    string
-}
-
-type Description struct {
-	Short string
-	Full  string
 }

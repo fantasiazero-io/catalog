@@ -9,7 +9,7 @@ type TreasureChest struct {
 	MangaId       string
 	Localizations []BoosterLocalization
 	Price         valueObjects.Price
-	Rarity        valueObjects.Rarity
+	Rarity        string
 }
 
 type TreasureChestLocalization struct {
@@ -19,7 +19,7 @@ type TreasureChestLocalization struct {
 }
 
 func NewTreasureChest(id string, mangaId string, localizations []BoosterLocalization, price valueObjects.Price,
-	rarity valueObjects.Rarity) TreasureChest {
+	rarity string) TreasureChest {
 	return TreasureChest{
 		Id:            id,
 		MangaId:       mangaId,

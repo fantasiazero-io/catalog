@@ -9,7 +9,7 @@ type Booster struct {
 	MangaId       string
 	Localizations []BoosterLocalization
 	Price         valueObjects.Price
-	Rarity        valueObjects.Rarity
+	Rarity        string
 }
 
 type BoosterLocalization struct {
@@ -19,7 +19,7 @@ type BoosterLocalization struct {
 }
 
 func NewBooster(id string, mangaId string, localizations []BoosterLocalization, price valueObjects.Price,
-	rarity valueObjects.Rarity) Booster {
+	rarity string) Booster {
 	return Booster{
 		Id:            id,
 		MangaId:       mangaId,

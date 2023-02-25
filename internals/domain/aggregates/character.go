@@ -1,52 +1,25 @@
 package aggregates
 
-import (
-	"catalog/internals/domain/valueObjects"
-)
-
 type Character struct {
 	Id            string
 	MangaId       string
-	Localizations []CharacterLocalization
-	Class         Class
-	PersonalityId string
-	LeadershipId  string
-	Rarity        valueObjects.Rarity
-	Level         int
-	IsPackable    bool
+	Name          string
+	ClassId       int
+	PersonalityId int
+	LeadershipId  int
+	RarityId      int
 }
 
-type CharacterLocalization struct {
-	Name        string
-	Description valueObjects.Description
-	Language    string
-}
-
-func NewCharacter(id string, mangaId string, localizations []CharacterLocalization,
-	class Class, personalityId string, leadershipId string,
-	rarity valueObjects.Rarity, level int, isPackable bool) Character {
+func NewCharacter(id string, mangaId string, name string,
+	classId int, personalityId int, leadershipId int,
+	rarityId int) Character {
 	return Character{
 		Id:            id,
 		MangaId:       mangaId,
-		Localizations: localizations,
-		Class:         class,
+		Name:          name,
+		ClassId:       classId,
 		PersonalityId: personalityId,
 		LeadershipId:  leadershipId,
-		Rarity:        rarity,
-		Level:         level,
-		IsPackable:    isPackable,
+		RarityId:      rarityId,
 	}
 }
-
-type Class int
-
-const (
-	Fighter Class = iota + 1
-	Leader
-	Sapient
-	Slasher
-	Sniper
-	Striker
-	Support
-	Tactician
-)
