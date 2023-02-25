@@ -49,7 +49,7 @@ func CreateManga(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, response.Message)
 		return
 	}
-	respondWithJSON(w, http.StatusCreated, request)
+	respondWithJSON(w, http.StatusOK, request)
 }
 
 func UpdateManga(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +69,17 @@ func UpdateManga(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, response.Message)
 		return
 	}
-	respondWithJSON(w, http.StatusCreated, request)
+	respondWithJSON(w, http.StatusOK, request)
+}
+
+func DeleteManga(w http.ResponseWriter, r *http.Request) {
+	response := handlers.DeleteManga(mux.Vars(r)["id"])
+
+	if response.HasError {
+		respondWithError(w, http.StatusInternalServerError, response.Message)
+		return
+	}
+	respondWithJSON(w, http.StatusOK, nil)
 }
 
 func SearchManga(w http.ResponseWriter, r *http.Request) {
@@ -77,8 +87,12 @@ func SearchManga(w http.ResponseWriter, r *http.Request) {
 	response := handlers.SearchManga(queries.SearchMangaQuery{
 		Filter: mux.Vars(r)["filter"],
 	})
-
 	respondWithJSON(w, http.StatusOK, response.Items)
+}
+
+func GetMangaById(w http.ResponseWriter, r *http.Request) {
+	response := handlers.GetMangaById(mux.Vars(r)["id"])
+	respondWithJSON(w, http.StatusOK, response)
 }
 
 type CreateCharacterRequest struct {

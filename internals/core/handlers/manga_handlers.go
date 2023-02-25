@@ -37,7 +37,25 @@ func UpdateManga(command commands.UpdateManga) handlers.HandlerResponse {
 	}
 }
 
+func DeleteManga(id string) handlers.HandlerResponse {
+	var error = persistence.DeleteManga(id)
+	if error != nil {
+		return handlers.HandlerResponse{
+			HasError: true,
+			Message:  "Manga deletion failed",
+		}
+	}
+	return handlers.HandlerResponse{
+		HasError: false,
+	}
+}
+
 func SearchManga(query queries.SearchMangaQuery) readModels.SearchMangaReadModel {
 	var readModel = persistence.SearchManga(query.Filter)
 	return readModel
+}
+
+func GetMangaById(id string) readModels.GetMangaByIdReadModel {
+	var manga = persistence.GetMangaByIdManga(id)
+	return manga
 }

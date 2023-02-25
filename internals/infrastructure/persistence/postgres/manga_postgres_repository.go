@@ -3,6 +3,7 @@ package postgres
 import (
 	"catalog/internals/domain/aggregates"
 	"catalog/internals/domain/readModels"
+	"errors"
 	_ "github.com/lib/pq"
 	"log"
 	"time"
@@ -11,10 +12,6 @@ import (
 func CreateManga(id string, name string) error {
 	db, err := CreateConnection()
 	manga := aggregates.NewManga(id, name)
-
-	if err != nil {
-		panic(err)
-	}
 
 	sql := "INSERT INTO \"Mangas\" (\"Id\",\"Name\", \"CreationDate\") VALUES ($1,$2,$3)"
 
@@ -33,15 +30,32 @@ func CreateManga(id string, name string) error {
 func UpdateManga(id string, name string) error {
 	db, err := CreateConnection()
 
-	manga := aggregates.NewManga(id, name)
+	manga := getMangaByIdManga(id)
 
-	if err != nil {
-		panic(err)
+	if manga == nil {
+		return errors.New("Manga with not found")
 	}
 
-	sql := "UPDATE FROM \"Mangas\"  SET \"Name\" = $1, \"LastUpdate\"= $2 WHERE \"Id\" = $3"
+	manga.Update(name)
 
-	result, err := db.Exec(sql,  manga.Name, ,manga.Id,)
+	sql := "UPDATE \"Mangas\"  SET \"Name\" = $1, \"LastUpdate\"= $2 WHERE \"Id\" = $3"
+	result, err := db.Exec(sql, manga.Name, manga.LastUpdate, manga.Id)
+
+	CloseConnection(db)
+	if err != nil {
+		log.Fatal(result)
+		log.Fatal(err)
+		return nil
+	}
+
+	return nil
+}
+
+func DeleteManga(id string) error {
+	db, err := CreateConnection()
+
+	sql := "DELETE FROM \"Mangas\" WHERE \"Id\" = $1"
+	result, err := db.Exec(sql, id)
 
 	CloseConnection(db)
 	if err != nil {
@@ -57,7 +71,10 @@ func SearchManga(filter string) readModels.SearchMangaReadModel {
 	db, err := CreateConnection()
 	mangas := []SearchMangaQueryModel{}
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		return readModels.SearchMangaReadModel{
+			Items: []readModels.SearchMangaReadModelDetail{},
+		}
 	}
 
 	sql := ""
@@ -90,27 +107,36 @@ func SearchManga(filter string) readModels.SearchMangaReadModel {
 	}
 }
 
-func GetMangaByIdManga(id string)  *readModels.GetMangaByIdReadModel{
-	manga:= getMangaByIdManga(id)
+func GetMangaByIdManga(id string) readModels.GetMangaByIdReadModel {
+	var manga = getMangaByIdManga(id)
 	return readModels.GetMangaByIdReadModel{
-
+		Id:           manga.Id,
+		Name:         manga.Name,
+		CreationDate: manga.CreationDate,
+		LastUpdate:   manga.LastUpdate,
 	}
 }
 
-func getMangaByIdManga(id string)  *GetMangaByIdQueryModel{
+func getMangaByIdManga(id string) *aggregates.Manga {
 	db, err := CreateConnection()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		return nil
 	}
 	manga := GetMangaByIdQueryModel{}
-	sql := "SELECT \"Id\",\"Name\", \"CreationDate\", \"LastUpdate\"  FROM \"Mangas\" WHERE \"Id\" = $1"
-	err = db.Select(&manga, sql, id)
+	sql := "SELECT \"Id\",\"Name\", \"CreationDate\", \"LastUpdate\"  FROM \"Mangas\" WHERE \"Id\" = $1 LIMIT 1"
+	err = db.Get(&manga, sql, id)
 	CloseConnection(db)
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
-	return &manga
+	return &aggregates.Manga{
+		Id:           manga.Id,
+		Name:         manga.Name,
+		CreationDate: manga.CreationDate,
+		LastUpdate:   manga.LastUpdate,
+	}
 }
 
 type SearchMangaQueryModel struct {
